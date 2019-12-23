@@ -21,9 +21,13 @@ MojoClient::MojoClient() :
     msg_iiwa_joint_state.velocity.resize(7);
     msg_iiwa_joint_state.effort.resize(7);
     msg_iiwa_joint_state.name.resize(7);
-    for (int i=0; i<7; i++){
-        msg_iiwa_joint_state.name[i] = "joint_a" + std::to_string(i+1);
-    }
+    msg_iiwa_joint_state.name[0] = "joint_a1";
+    msg_iiwa_joint_state.name[1] = "joint_a2";
+    msg_iiwa_joint_state.name[2] = "joint_a3";
+    msg_iiwa_joint_state.name[3] = "joint_a4";
+    msg_iiwa_joint_state.name[4] = "joint_a5";
+    msg_iiwa_joint_state.name[5] = "joint_a6";
+    msg_iiwa_joint_state.name[6] = "joint_a7";
 
     msg_external_torque.values.resize(7);
 
