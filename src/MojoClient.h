@@ -12,6 +12,7 @@
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
 #include "ros_iiwa_fri/ExternalTorque.h"
+#include "ros_iiwa_fri/JointCommandPosition.h"
 
 /**
  * \brief Example client for Fieldbus access.
@@ -22,9 +23,12 @@ private:
     ros::NodeHandle n;
     ros::Publisher joint_state_pub;
     ros::Publisher external_torque_pub;
+    ros::Subscriber joint_command_position_sub;
     sensor_msgs::JointState msg_iiwa_joint_state;
     ros_iiwa_fri::ExternalTorque msg_external_torque;
+    ros_iiwa_fri::JointCommandPosition msg_joint_command_position;
 
+    void rosPublish();
 public:
 
     /**

@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
 #include "ros_iiwa_fri/ExternalTorque.h"
+#include "ros_iiwa_fri/JointCommandPosition.h"
 
 #include "MojoClient.h"
 #include "friUdpConnection.h"
@@ -29,7 +30,7 @@ int main(int argc, char **argv)
     }
 
     MojoClient lbrClient;
-    printf("\nEnter Mojo Client Application");
+    printf("\nEnter Mojo Client Application\n");
 
     char* hostname = (argc >= 2) ? argv[1] : NULL;
     int port = (argc >= 3) ? atoi(argv[2]) : DEFAULT_PORTID;
@@ -41,14 +42,9 @@ int main(int argc, char **argv)
     app.connect(port, hostname);
 
     bool success = true;
-    bool started = false;
     while (ros::ok() and success)
     {
         // FRI loop start
-        if (not started){
-            printf("balls");
-            started = true;
-        }
         success = app.step();
 
         // check if we are in IDLE because the FRI session was closed
@@ -64,7 +60,7 @@ int main(int argc, char **argv)
     }
 
     app.disconnect();
-    printf("\nExit Mojo Client Application");
+    printf("\nExit Mojo Client Application\n");
 
     return 0;
 }
