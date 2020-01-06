@@ -10,7 +10,7 @@ find_package(
 	message_generation
 )
 
-add_message_files(FILES ExternalTorque.msg)
+add_message_files(FILES ExternalTorque.msg JointCommandPosition.msg)
 
 generate_messages(
 	DEPENDENCIES
