@@ -10,7 +10,7 @@ find_package(
 	message_generation
 )
 
-add_message_files(FILES ExternalTorque.msg JointCommandPosition.msg)
+add_message_files(FILES ExternalTorque.msg JointCommandPosition.msg iiwaRobotCommand.msg iiwaRobotState.msg)
 
 generate_messages(
 	DEPENDENCIES

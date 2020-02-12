@@ -2,6 +2,8 @@
 #include "sensor_msgs/JointState.h"
 #include "ros_iiwa_fri/ExternalTorque.h"
 #include "ros_iiwa_fri/JointCommandPosition.h"
+#include "ros_iiwa_fri/iiwaRobotCommand.h"
+#include "ros_iiwa_fri/iiwaRobotState.h"
 
 #include "MojoClient.h"
 #include "friUdpConnection.h"
