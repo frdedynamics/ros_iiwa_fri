@@ -60,6 +60,7 @@ int main(int argc, char **argv)
     }
 
     app.disconnect();
+    connection.close();
     printf("\nExit Mojo Client Application\n");
 
     return 0;
