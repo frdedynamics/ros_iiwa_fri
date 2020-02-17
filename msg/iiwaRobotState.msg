@@ -5,3 +5,6 @@ bool InputX3Pin10
 bool InputX3Pin13
 bool InputX3Pin16
 bool UserButton
+bool UserButtonPulseExtended
+bool gripped
+bool released

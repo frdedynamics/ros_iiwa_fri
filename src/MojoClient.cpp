@@ -30,6 +30,7 @@ ros::Time JOINT_POSITION_COMMAND_STAMP_PREVIOUS;
 robot_commands ROBOT_COMMAND;
 ros::Time ROBOT_COMMAND_STAMP_CURRENT;
 ros::Time ROBOT_COMMAND_STAMP_PREVIOUS;
+ros::Time USER_BUTTON_CLICKED_TIME = ros::Time::now() - ros::Duration(60);
 
 void cmdCallback(const ros_iiwa_fri::JointCommandPosition::ConstPtr& msg){
 
@@ -45,10 +46,28 @@ void cmdRobotCallback(const ros_iiwa_fri::iiwaRobotCommand::ConstPtr& msg){
 
     ROBOT_COMMAND_STAMP_CURRENT = ros::Time::now();
     ROBOT_COMMAND.LEDBlue = msg->LEDBlue;
-    ROBOT_COMMAND.OutputX3Pin1 = msg->OutputX3Pin1;
-    ROBOT_COMMAND.OutputX3Pin2 = msg->OutputX3Pin2;
-    ROBOT_COMMAND.OutputX3Pin11 = msg->OutputX3Pin11;
-    ROBOT_COMMAND.OutputX3Pin12 = msg->OutputX3Pin12;
+    if (msg->no_command){
+        ROBOT_COMMAND.OutputX3Pin1 = false;
+        ROBOT_COMMAND.OutputX3Pin11 = false;
+    } else if (msg->release){
+        ROBOT_COMMAND.OutputX3Pin1 = false;
+        ROBOT_COMMAND.OutputX3Pin11 = true;
+    } else if (msg->grip){
+        ROBOT_COMMAND.OutputX3Pin1 = true;
+        ROBOT_COMMAND.OutputX3Pin11 = false;
+    }
+
+    if (msg->LEDRed){
+        ROBOT_COMMAND.OutputX3Pin2 = true;
+        ROBOT_COMMAND.OutputX3Pin12 = true;
+    } else if (msg->LEDYellow){
+        ROBOT_COMMAND.OutputX3Pin2 = false;
+        ROBOT_COMMAND.OutputX3Pin12 = true;
+    } else if (msg->LEDGreen){
+        ROBOT_COMMAND.OutputX3Pin2 = true;
+        ROBOT_COMMAND.OutputX3Pin12 = false;
+    }
+
     //ROBOT_COMMAND.SwitchOffX3Voltage = msg->SwitchOffX3Voltage;
     ROBOT_COMMAND_STAMP_PREVIOUS = ROBOT_COMMAND_STAMP_CURRENT;
 }
@@ -141,7 +160,9 @@ void MojoClient::command()
 
 void MojoClient::rosPublish(){
 
-    double delta_t = (ros::Time::now() - msg_iiwa_joint_state.header.stamp).toSec();
+    ros::Time ros_time_now = ros::Time::now();
+
+    double delta_t = (ros_time_now - msg_iiwa_joint_state.header.stamp).toSec();
 
     for (int i=0; i<7; i++){
         msg_iiwa_joint_state.velocity[i] = (robotState().getMeasuredJointPosition()[i]
@@ -162,6 +183,26 @@ void MojoClient::rosPublish(){
     //msg_iiwa_robot_state.InputX3Pin13 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin13");
     //msg_iiwa_robot_state.InputX3Pin16 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin16");
     msg_iiwa_robot_state.UserButton = robotState().getBooleanIOValue("MediaFlange.UserButton");
+    if (msg_iiwa_robot_state.UserButton){
+        USER_BUTTON_CLICKED_TIME = ros_time_now;
+    }
+    if ( (ros_time_now - USER_BUTTON_CLICKED_TIME).sec < 1){
+        msg_iiwa_robot_state.UserButtonPulseExtended = true;
+    } else {
+        msg_iiwa_robot_state.UserButtonPulseExtended = false;
+    }
+
+    if (msg_iiwa_robot_state.InputX3Pin16){
+        msg_iiwa_robot_state.released = true;
+    } else {
+        msg_iiwa_robot_state.released = false;
+    }
+
+    if (msg_iiwa_robot_state.InputX3Pin10){
+        msg_iiwa_robot_state.gripped = true;
+    } else {
+        msg_iiwa_robot_state.gripped = false;
+    }
 
     if (not STARTED){
         ROBOT_COMMAND.LEDBlue = robotState().getBooleanIOValue("MediaFlange.LEDBlue");
@@ -179,9 +220,9 @@ void MojoClient::rosPublish(){
     robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin11",ROBOT_COMMAND.OutputX3Pin11);
     robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin12",ROBOT_COMMAND.OutputX3Pin12);
 
-    msg_iiwa_joint_state.header.stamp = ros::Time::now();
-    msg_external_torque.stamp = ros::Time::now();
-    msg_iiwa_robot_state.stamp = ros::Time::now();
+    msg_iiwa_joint_state.header.stamp = ros_time_now;
+    msg_external_torque.stamp = ros_time_now;
+    msg_iiwa_robot_state.stamp = ros_time_now;
 
     joint_state_pub.publish(msg_iiwa_joint_state);
     external_torque_pub.publish(msg_external_torque);
