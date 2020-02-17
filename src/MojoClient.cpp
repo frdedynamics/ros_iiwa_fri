@@ -30,7 +30,7 @@ ros::Time JOINT_POSITION_COMMAND_STAMP_PREVIOUS;
 robot_commands ROBOT_COMMAND;
 ros::Time ROBOT_COMMAND_STAMP_CURRENT;
 ros::Time ROBOT_COMMAND_STAMP_PREVIOUS;
-ros::Time USER_BUTTON_CLICKED_TIME = ros::Time::now() - ros::Duration(60);
+ros::Time USER_BUTTON_CLICKED_TIME;
 
 void cmdCallback(const ros_iiwa_fri::JointCommandPosition::ConstPtr& msg){
 
@@ -65,6 +65,9 @@ void cmdRobotCallback(const ros_iiwa_fri::iiwaRobotCommand::ConstPtr& msg){
         ROBOT_COMMAND.OutputX3Pin12 = true;
     } else if (msg->LEDGreen){
         ROBOT_COMMAND.OutputX3Pin2 = true;
+        ROBOT_COMMAND.OutputX3Pin12 = false;
+    } else {
+        ROBOT_COMMAND.OutputX3Pin2 = false;
         ROBOT_COMMAND.OutputX3Pin12 = false;
     }
 
@@ -177,11 +180,15 @@ void MojoClient::rosPublish(){
         }
     }
 
+    if (not STARTED){
+        USER_BUTTON_CLICKED_TIME = ros_time_now - ros::Duration(60);
+    }
+
     //msg_iiwa_robot_state.InputX3Pin3 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin3");
     //msg_iiwa_robot_state.InputX3Pin4 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin4");
     msg_iiwa_robot_state.InputX3Pin10 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin10");
     //msg_iiwa_robot_state.InputX3Pin13 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin13");
-    //msg_iiwa_robot_state.InputX3Pin16 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin16");
+    msg_iiwa_robot_state.InputX3Pin16 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin16");
     msg_iiwa_robot_state.UserButton = robotState().getBooleanIOValue("MediaFlange.UserButton");
     if (msg_iiwa_robot_state.UserButton){
         USER_BUTTON_CLICKED_TIME = ros_time_now;
