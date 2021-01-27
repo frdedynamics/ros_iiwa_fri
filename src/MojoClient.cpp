@@ -25,6 +25,8 @@ struct robot_commands{
 };
 
 bool STARTED = false;
+bool USE_MEDIA_FLANGE = false;
+bool USE_AXIA_FT_SENSOR = true;
 double JOINT_POSITION_COMMAND[7];
 ros::Time JOINT_POSITION_COMMAND_STAMP_CURRENT;
 ros::Time JOINT_POSITION_COMMAND_STAMP_PREVIOUS;
@@ -185,59 +187,65 @@ void MojoClient::rosPublish(){
         }
     }
 
-    msg_ati_ft.wrench.force.x = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fx");
-    msg_ati_ft.wrench.force.y = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fy");
-    msg_ati_ft.wrench.force.z = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fz");
-    msg_ati_ft.wrench.torque.x = robotState().getAnalogIOValue("AtiAxiaFtSensor.Tx");
-    msg_ati_ft.wrench.torque.y = robotState().getAnalogIOValue("AtiAxiaFtSensor.Ty");
-    msg_ati_ft.wrench.torque.z = robotState().getAnalogIOValue("AtiAxiaFtSensor.Tz");
-
-    if (not STARTED){
-        USER_BUTTON_CLICKED_TIME = ros_time_now - ros::Duration(60);
+    if (USE_AXIA_FT_SENSOR) {
+        msg_ati_ft.wrench.force.x = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fx");
+        msg_ati_ft.wrench.force.y = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fy");
+        msg_ati_ft.wrench.force.z = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fz");
+        msg_ati_ft.wrench.torque.x = robotState().getAnalogIOValue("AtiAxiaFtSensor.Tx");
+        msg_ati_ft.wrench.torque.y = robotState().getAnalogIOValue("AtiAxiaFtSensor.Ty");
+        msg_ati_ft.wrench.torque.z = robotState().getAnalogIOValue("AtiAxiaFtSensor.Tz");
     }
+    
+    if (USE_MEDIA_FLANGE) {
+        if (not STARTED) {
+            USER_BUTTON_CLICKED_TIME = ros_time_now - ros::Duration(60);
+        }
 
-    //msg_iiwa_robot_state.InputX3Pin3 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin3");
-    //msg_iiwa_robot_state.InputX3Pin4 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin4");
-    msg_iiwa_robot_state.InputX3Pin10 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin10");
-    //msg_iiwa_robot_state.InputX3Pin13 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin13");
-    msg_iiwa_robot_state.InputX3Pin16 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin16");
-    msg_iiwa_robot_state.UserButton = robotState().getBooleanIOValue("MediaFlange.UserButton");
-    if (msg_iiwa_robot_state.UserButton){
-        USER_BUTTON_CLICKED_TIME = ros_time_now;
-    }
-    if ( (ros_time_now - USER_BUTTON_CLICKED_TIME).sec < 1){
-        msg_iiwa_robot_state.UserButtonPulseExtended = true;
-    } else {
-        msg_iiwa_robot_state.UserButtonPulseExtended = false;
-    }
+        //msg_iiwa_robot_state.InputX3Pin3 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin3");
+        //msg_iiwa_robot_state.InputX3Pin4 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin4");
+        msg_iiwa_robot_state.InputX3Pin10 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin10");
+        //msg_iiwa_robot_state.InputX3Pin13 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin13");
+        msg_iiwa_robot_state.InputX3Pin16 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin16");
+        msg_iiwa_robot_state.UserButton = robotState().getBooleanIOValue("MediaFlange.UserButton");
+        if (msg_iiwa_robot_state.UserButton) {
+            USER_BUTTON_CLICKED_TIME = ros_time_now;
+        }
+        if ((ros_time_now - USER_BUTTON_CLICKED_TIME).sec < 1) {
+            msg_iiwa_robot_state.UserButtonPulseExtended = true;
+        } else {
+            msg_iiwa_robot_state.UserButtonPulseExtended = false;
+        }
 
-    if (msg_iiwa_robot_state.InputX3Pin16){
-        msg_iiwa_robot_state.released = true;
-    } else {
-        msg_iiwa_robot_state.released = false;
-    }
+        if (msg_iiwa_robot_state.InputX3Pin16) {
+            msg_iiwa_robot_state.released = true;
+        } else {
+            msg_iiwa_robot_state.released = false;
+        }
 
-    if (msg_iiwa_robot_state.InputX3Pin10){
-        msg_iiwa_robot_state.gripped = true;
-    } else {
-        msg_iiwa_robot_state.gripped = false;
-    }
+        if (msg_iiwa_robot_state.InputX3Pin10) {
+            msg_iiwa_robot_state.gripped = true;
+        } else {
+            msg_iiwa_robot_state.gripped = false;
+        }
 
-    if (not STARTED){
-        ROBOT_COMMAND.LEDBlue = robotState().getBooleanIOValue("MediaFlange.LEDBlue");
-        ROBOT_COMMAND.OutputX3Pin1 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin1");
-        ROBOT_COMMAND.OutputX3Pin2 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin2");
-        ROBOT_COMMAND.OutputX3Pin11 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin11");
-        ROBOT_COMMAND.OutputX3Pin12 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin12");
-        //ROBOT_COMMAND.SwitchOffX3Voltage = robotState().getBooleanIOValue("MediaFlange.SwitchOffX3Voltage");
+        if (not STARTED) {
+            ROBOT_COMMAND.LEDBlue = robotState().getBooleanIOValue("MediaFlange.LEDBlue");
+            ROBOT_COMMAND.OutputX3Pin1 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin1");
+            ROBOT_COMMAND.OutputX3Pin2 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin2");
+            ROBOT_COMMAND.OutputX3Pin11 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin11");
+            ROBOT_COMMAND.OutputX3Pin12 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin12");
+            //ROBOT_COMMAND.SwitchOffX3Voltage = robotState().getBooleanIOValue("MediaFlange.SwitchOffX3Voltage");
+        }
     }
     STARTED = true;
 
-    robotCommand().setBooleanIOValue("MediaFlange.LEDBlue",ROBOT_COMMAND.LEDBlue);
-    robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin1",ROBOT_COMMAND.OutputX3Pin1);
-    robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin2",ROBOT_COMMAND.OutputX3Pin2);
-    robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin11",ROBOT_COMMAND.OutputX3Pin11);
-    robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin12",ROBOT_COMMAND.OutputX3Pin12);
+    if (USE_MEDIA_FLANGE) {
+        robotCommand().setBooleanIOValue("MediaFlange.LEDBlue", ROBOT_COMMAND.LEDBlue);
+        robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin1", ROBOT_COMMAND.OutputX3Pin1);
+        robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin2", ROBOT_COMMAND.OutputX3Pin2);
+        robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin11", ROBOT_COMMAND.OutputX3Pin11);
+        robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin12", ROBOT_COMMAND.OutputX3Pin12);
+    }
 
     msg_iiwa_joint_state.header.stamp = ros_time_now;
     msg_external_torque.stamp = ros_time_now;
