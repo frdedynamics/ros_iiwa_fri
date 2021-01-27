@@ -107,7 +107,7 @@ MojoClient::MojoClient() :
 
     msg_joint_command_position.values.resize(7);
 
-    msg_ati_ft.header.frame_id = 'iiwa ee'
+    msg_ati_ft.header.frame_id = "iiwa_ee";
 
     printf("MojoClient initialized:\n");
 }
@@ -188,12 +188,12 @@ void MojoClient::rosPublish(){
     }
 
     if (USE_AXIA_FT_SENSOR) {
-        msg_ati_ft.wrench.force.x = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fx");
-        msg_ati_ft.wrench.force.y = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fy");
-        msg_ati_ft.wrench.force.z = robotState().getAnalogIOValue("AtiAxiaFtSensor.Fz");
-        msg_ati_ft.wrench.torque.x = robotState().getAnalogIOValue("AtiAxiaFtSensor.Tx");
-        msg_ati_ft.wrench.torque.y = robotState().getAnalogIOValue("AtiAxiaFtSensor.Ty");
-        msg_ati_ft.wrench.torque.z = robotState().getAnalogIOValue("AtiAxiaFtSensor.Tz");
+        msg_ati_ft.wrench.force.x = robotState().getDigitalIOValue("AtiAxiaFtSensor.Fx");
+        msg_ati_ft.wrench.force.y = robotState().getDigitalIOValue("AtiAxiaFtSensor.Fy");
+        msg_ati_ft.wrench.force.z = robotState().getDigitalIOValue("AtiAxiaFtSensor.Fz");
+        msg_ati_ft.wrench.torque.x = robotState().getDigitalIOValue("AtiAxiaFtSensor.Tx");
+        msg_ati_ft.wrench.torque.y = robotState().getDigitalIOValue("AtiAxiaFtSensor.Ty");
+        msg_ati_ft.wrench.torque.z = robotState().getDigitalIOValue("AtiAxiaFtSensor.Tz");
     }
 
     if (USE_MEDIA_FLANGE) {
