@@ -11,6 +11,7 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
+#include "geometry_msgs/WrenchStamped.h"
 #include "ros_iiwa_fri/ExternalTorque.h"
 #include "ros_iiwa_fri/JointCommandPosition.h"
 #include "ros_iiwa_fri/iiwaRobotCommand.h"
@@ -26,9 +27,11 @@ private:
     ros::Publisher joint_state_pub;
     ros::Publisher external_torque_pub;
     ros::Publisher iiwa_robot_state_pub;
+    ros::Publisher ati_ft_pub;
     ros::Subscriber joint_command_position_sub;
     ros::Subscriber iiwa_robot_command_sub;
     sensor_msgs::JointState msg_iiwa_joint_state;
+    geometry_msgs::WrenchStamped msg_ati_ft;
     ros_iiwa_fri::ExternalTorque msg_external_torque;
     ros_iiwa_fri::JointCommandPosition msg_joint_command_position;
     ros_iiwa_fri::iiwaRobotCommand msg_iiwa_robot_command;

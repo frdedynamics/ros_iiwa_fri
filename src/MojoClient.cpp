@@ -7,6 +7,7 @@
 
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
+#include "geometry_msgs/WrenchStamped.h"
 #include "ros_iiwa_fri/ExternalTorque.h"
 #include "ros_iiwa_fri/JointCommandPosition.h"
 #include "ros_iiwa_fri/iiwaRobotCommand.h"
@@ -76,11 +77,13 @@ void cmdRobotCallback(const ros_iiwa_fri::iiwaRobotCommand::ConstPtr& msg){
 }
 
 MojoClient::MojoClient() :
-        n(), joint_state_pub(), external_torque_pub(), iiwa_robot_state_pub(), joint_command_position_sub(),
-        iiwa_robot_command_sub(), msg_iiwa_joint_state(), msg_external_torque(), msg_joint_command_position(),
-        msg_iiwa_robot_command(), msg_iiwa_robot_state()
+        n(), joint_state_pub(), external_torque_pub(), iiwa_robot_state_pub(), ati_ft_pub(),
+        joint_command_position_sub(), iiwa_robot_command_sub(),
+        msg_iiwa_joint_state(), msg_external_torque(), msg_joint_command_position(),
+        msg_iiwa_robot_command(), msg_iiwa_robot_state(), msg_ati_ft()
 {
     joint_state_pub = n.advertise<sensor_msgs::JointState>("iiwa_joint_states", 1);
+    ati_ft_pub = n.advertise<geometry_msgs::WrenchStamped>("ati_ft", 1);
     external_torque_pub = n.advertise<ros_iiwa_fri::ExternalTorque>("iiwa_external_torque", 1);
     iiwa_robot_state_pub = n.advertise<ros_iiwa_fri::iiwaRobotState>("iiwa_robot_state", 1);
     joint_command_position_sub = n.subscribe("iiwa_joint_cmd_pos", 1, cmdCallback);
