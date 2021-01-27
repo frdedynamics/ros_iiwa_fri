@@ -195,7 +195,7 @@ void MojoClient::rosPublish(){
         msg_ati_ft.wrench.torque.y = robotState().getAnalogIOValue("AtiAxiaFtSensor.Ty");
         msg_ati_ft.wrench.torque.z = robotState().getAnalogIOValue("AtiAxiaFtSensor.Tz");
     }
-    
+
     if (USE_MEDIA_FLANGE) {
         if (not STARTED) {
             USER_BUTTON_CLICKED_TIME = ros_time_now - ros::Duration(60);
