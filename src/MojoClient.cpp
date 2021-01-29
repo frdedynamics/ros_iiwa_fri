@@ -27,6 +27,8 @@ struct robot_commands{
 bool STARTED = false;
 bool USE_MEDIA_FLANGE = false;
 bool USE_AXIA_FT_SENSOR = true;
+float AXIA_COUNTS_PER_FORCE = 1000000.0;
+float AXIA_COUNTS_PER_TORQUE = 1000000.0;
 double JOINT_POSITION_COMMAND[7];
 ros::Time JOINT_POSITION_COMMAND_STAMP_CURRENT;
 ros::Time JOINT_POSITION_COMMAND_STAMP_PREVIOUS;
@@ -188,12 +190,18 @@ void MojoClient::rosPublish(){
     }
 
     if (USE_AXIA_FT_SENSOR) {
-        msg_ati_ft.wrench.force.x = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Fx");
-        msg_ati_ft.wrench.force.y = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Fy");
-        msg_ati_ft.wrench.force.z = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Fz");
-        msg_ati_ft.wrench.torque.x = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Tx");
-        msg_ati_ft.wrench.torque.y = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Ty");
-        msg_ati_ft.wrench.torque.z = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Tz");
+        msg_ati_ft.wrench.force.x = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Fx")
+                /AXIA_COUNTS_PER_FORCE;
+        msg_ati_ft.wrench.force.y = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Fy")
+                                    /AXIA_COUNTS_PER_FORCE;
+        msg_ati_ft.wrench.force.z = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Fz")
+                                    /AXIA_COUNTS_PER_FORCE;
+        msg_ati_ft.wrench.torque.x = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Tx")
+                                     /AXIA_COUNTS_PER_TORQUE;
+        msg_ati_ft.wrench.torque.y = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Ty")
+                                     /AXIA_COUNTS_PER_TORQUE;
+        msg_ati_ft.wrench.torque.z = (float) (int) robotState().getDigitalIOValue("AtiAxiaFtSensor.Tz")
+                                     /AXIA_COUNTS_PER_TORQUE;
     }
 
     if (USE_MEDIA_FLANGE) {
