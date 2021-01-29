@@ -25,7 +25,7 @@ struct robot_commands{
 };
 
 bool STARTED = false;
-bool USE_MEDIA_FLANGE = false;
+bool USE_MEDIA_FLANGE = true;
 bool USE_AXIA_FT_SENSOR = true;
 float AXIA_COUNTS_PER_FORCE = 1000000.0;
 float AXIA_COUNTS_PER_TORQUE = 1000000.0;
@@ -211,7 +211,7 @@ void MojoClient::rosPublish(){
 
         //msg_iiwa_robot_state.InputX3Pin3 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin3");
         //msg_iiwa_robot_state.InputX3Pin4 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin4");
-        msg_iiwa_robot_state.InputX3Pin10 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin10");
+        //msg_iiwa_robot_state.InputX3Pin10 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin10");
         //msg_iiwa_robot_state.InputX3Pin13 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin13");
         msg_iiwa_robot_state.InputX3Pin16 = robotState().getBooleanIOValue("MediaFlange.InputX3Pin16");
         msg_iiwa_robot_state.UserButton = robotState().getBooleanIOValue("MediaFlange.UserButton");
@@ -237,22 +237,22 @@ void MojoClient::rosPublish(){
         }
 
         if (not STARTED) {
-            ROBOT_COMMAND.LEDBlue = robotState().getBooleanIOValue("MediaFlange.LEDBlue");
+            // - ROBOT_COMMAND.LEDBlue = robotState().getBooleanIOValue("MediaFlange.LEDBlue");
             ROBOT_COMMAND.OutputX3Pin1 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin1");
-            ROBOT_COMMAND.OutputX3Pin2 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin2");
+            //ROBOT_COMMAND.OutputX3Pin2 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin2");
             ROBOT_COMMAND.OutputX3Pin11 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin11");
-            ROBOT_COMMAND.OutputX3Pin12 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin12");
+            //ROBOT_COMMAND.OutputX3Pin12 = robotState().getBooleanIOValue("MediaFlange.OutputX3Pin12");
             //ROBOT_COMMAND.SwitchOffX3Voltage = robotState().getBooleanIOValue("MediaFlange.SwitchOffX3Voltage");
         }
     }
     STARTED = true;
 
     if (USE_MEDIA_FLANGE) {
-        robotCommand().setBooleanIOValue("MediaFlange.LEDBlue", ROBOT_COMMAND.LEDBlue);
+        //robotCommand().setBooleanIOValue("MediaFlange.LEDBlue", ROBOT_COMMAND.LEDBlue);
         robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin1", ROBOT_COMMAND.OutputX3Pin1);
-        robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin2", ROBOT_COMMAND.OutputX3Pin2);
+        //robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin2", ROBOT_COMMAND.OutputX3Pin2);
         robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin11", ROBOT_COMMAND.OutputX3Pin11);
-        robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin12", ROBOT_COMMAND.OutputX3Pin12);
+        //robotCommand().setBooleanIOValue("MediaFlange.OutputX3Pin12", ROBOT_COMMAND.OutputX3Pin12);
     }
 
     msg_iiwa_joint_state.header.stamp = ros_time_now;
