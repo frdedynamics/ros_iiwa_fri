@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "sensor_msgs/JointState.h"
+#include "geometry_msgs/WrenchStamped.h"
 #include "ros_iiwa_fri/ExternalTorque.h"
 #include "ros_iiwa_fri/JointCommandPosition.h"
 #include "ros_iiwa_fri/iiwaRobotCommand.h"
